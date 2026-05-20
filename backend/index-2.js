@@ -1,11 +1,33 @@
-const initialPoints = { A: 10, B: 7, C: 5 };
+const initialPoints = {
+  RCB: 18,
+  GT: 16,
+  SRH: 16,
+  RR: 14,
+  PBKS: 13,
+  CSK: 12,
+  DC: 12,
+  KKR: 11,
+  MI: 8,
+  LSG: 8,
+};
 
-const matches = ['AB', 'BC'];
+const matches = ['MI-KKR', 'GT-CSK', 'SRH-RCB', 'LSG-PBKS', 'MI-RR', 'KKR-DC'];
 
 const WIN_POINTS = 2;
 const DRAW_POINTS = 1;
 
-const QUALIFIED_SCENARIOS = { A: 0, B: 0, C: 0 };
+const QUALIFIED_SCENARIOS = {
+  RCB: 0,
+  GT: 0,
+  SRH: 0,
+  RR: 0,
+  PBKS: 0,
+  CSK: 0,
+  DC: 0,
+  KKR: 0,
+  MI: 0,
+  LSG: 0,
+};
 let TOTAL = 0;
 
 const displayQualifiedScenarios = () => {
@@ -28,14 +50,13 @@ const tbd = (points) => {
 
   // console.log({ pointToTeams });
 
-  // Max two points
-  const [max1, max2] = Object.keys(pointToTeams)
+  const [max1, max2, max3, max4] = Object.keys(pointToTeams)
     .map(Number)
     .sort((a, b) => b - a);
 
   // console.log({ max1, max2 });
 
-  if (pointToTeams[max1].length === 2) {
+  if (pointToTeams[max1].length === 4) {
     for (const team of pointToTeams[max1]) {
       QUALIFIED_SCENARIOS[team] += 1;
     }
@@ -49,6 +70,14 @@ const tbd = (points) => {
 
   for (const team of pointToTeams[max2]) {
     QUALIFIED_SCENARIOS[team] += 1.0 / pointToTeams[max2].length;
+  }
+
+  for (const team of pointToTeams[max3]) {
+    QUALIFIED_SCENARIOS[team] += 1.0 / pointToTeams[max3].length;
+  }
+
+  for (const team of pointToTeams[max4]) {
+    QUALIFIED_SCENARIOS[team] += 1.0 / pointToTeams[max4].length;
   }
 };
 
@@ -66,7 +95,7 @@ const dfs = (at, points) => {
   }
 
   const match = matches[at];
-  const [team1, team2] = match.split('');
+  const [team1, team2] = match.split('-');
 
   // Team 1 wins
   points[team1] += WIN_POINTS;

@@ -1,3 +1,5 @@
+const { getProbability } = require('./probability');
+
 const initialPoints = {
   RCB: 18,
   GT: 16,
@@ -39,51 +41,11 @@ const displayQualifiedScenarios = () => {
 };
 
 const tbd = (points) => {
-  const pointToTeams = {};
-  for (const team in points) {
-    const point = points[team];
-    if (!pointToTeams[point]) {
-      pointToTeams[point] = [];
-    }
-    pointToTeams[point].push(team);
-  }
-
-  // console.log({ pointToTeams });
-
-  const [max1, max2, max3, max4] = Object.keys(pointToTeams)
-    .map(Number)
-    .sort((a, b) => b - a);
-
-  // console.log({ max1, max2 });
-
-  if (pointToTeams[max1].length === 4) {
-    for (const team of pointToTeams[max1]) {
-      QUALIFIED_SCENARIOS[team] += 1;
-    }
-
-    return;
-  }
-
-  for (const team of pointToTeams[max1]) {
-    QUALIFIED_SCENARIOS[team] += 1.0 / pointToTeams[max1].length;
-  }
-
-  for (const team of pointToTeams[max2]) {
-    QUALIFIED_SCENARIOS[team] += 1.0 / pointToTeams[max2].length;
-  }
-
-  for (const team of pointToTeams[max3]) {
-    QUALIFIED_SCENARIOS[team] += 1.0 / pointToTeams[max3].length;
-  }
-
-  for (const team of pointToTeams[max4]) {
-    QUALIFIED_SCENARIOS[team] += 1.0 / pointToTeams[max4].length;
+  const teamProbs = getProbability(points, 4);
+  for (const team in teamProbs) {
+    QUALIFIED_SCENARIOS[team] += teamProbs[team];
   }
 };
-
-// A - 12
-// B - 7
-// C - 7
 
 const dfs = (at, points) => {
   if (at === matches.length) {
@@ -119,3 +81,4 @@ dfs(0, { ...initialPoints });
 
 // console.log(QUALIFIED_SCENARIOS);
 displayQualifiedScenarios();
+// console.log({ TOTAL });

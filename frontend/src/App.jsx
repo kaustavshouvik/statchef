@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -9,24 +9,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-const matches = [
-  {
-    team1: 'Team A',
-    team2: 'Team B',
-  },
-  {
-    team1: 'Team C',
-    team2: 'Team D',
-  },
-  {
-    team1: 'Team A',
-    team2: 'Team C',
-  },
-  {
-    team1: 'Team B',
-    team2: 'Team D',
-  },
-];
+import { INITIAL_POINTS, MATCHES, TEAMS } from './ipl';
+import { dfs } from './algorithms';
 
 function MatchOutcomeButton({ team, selected, disabled, onClick }) {
   // const [selected, setSelected] = useState(false);
@@ -81,7 +65,7 @@ function MatchOutcomeButton({ team, selected, disabled, onClick }) {
 function Match({ index, team1, team2, selectedOutcomes, onOutcomeChange }) {
   const disabled =
     (index > 0 && !selectedOutcomes[index - 1]) ||
-    (index < matches.length - 1 && selectedOutcomes[index + 1]);
+    (index < MATCHES.length - 1 && selectedOutcomes[index + 1]);
 
   const containerClass = disabled
     ? 'opacity-50 pointer-events-none transition-opacity'
@@ -128,13 +112,68 @@ function Match({ index, team1, team2, selectedOutcomes, onOutcomeChange }) {
 
 function App() {
   const [selectedOutcomes, setSelectedOutcomes] = useState({});
+  const [qualificationChances, setQualificationChances] = useState({});
+  const [effectivePoints, setEffectivePoints] = useState({});
 
   const onOutcomeChange = (matchIndex, outcome) => {
-    setSelectedOutcomes({
+    const newOutcomes = {
       ...selectedOutcomes,
-      [matchIndex]: outcome,
-    });
+      [matchIndex]: selectedOutcomes[matchIndex] === outcome ? null : outcome,
+    };
+
+    const newPoints = { ...INITIAL_POINTS };
+    for (let i = 0; i < MATCHES.length; i++) {
+      const outcome = newOutcomes[i];
+      if (outcome) {
+        const { team1, team2 } = MATCHES[i];
+
+        if (outcome === team1) {
+          newPoints[team1] += 2;
+        } else if (outcome === team2) {
+          newPoints[team2] += 2;
+        } else {
+          newPoints[team1] += 1;
+          newPoints[team2] += 1;
+        }
+      }
+    }
+
+    const res = dfs(Math.max(...Object.keys(newOutcomes).map(Number)) + 1, newPoints);
+
+    const chances = {};
+    for (const team of Object.values(TEAMS)) {
+      const chance = res.probs[team] / res.total;
+      chances[team] = chance;
+    }
+
+    setSelectedOutcomes(newOutcomes);
+    setQualificationChances(
+      Object.fromEntries(Object.entries(chances).sort((a, b) => b[1] - a[1])),
+    );
+    setEffectivePoints(Object.fromEntries(Object.entries(newPoints).sort((a, b) => b[1] - a[1])));
   };
+
+  const initialize = () => {
+    const res = dfs(0, INITIAL_POINTS);
+
+    const chances = {};
+    for (const team of Object.values(TEAMS)) {
+      const chance = res.probs[team] / res.total;
+      chances[team] = chance;
+    }
+
+    setQualificationChances(
+      Object.fromEntries(Object.entries(chances).sort((a, b) => b[1] - a[1])),
+    );
+    setEffectivePoints(
+      Object.fromEntries(Object.entries(INITIAL_POINTS).sort((a, b) => b[1] - a[1])),
+    );
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    initialize();
+  }, []);
 
   return (
     <div className="m-4">
@@ -143,7 +182,14 @@ function App() {
           <h2 className="text-3xl">Qualification Predictions</h2>
           <h4>Pick an outcome for each match.</h4>
         </div>
-        <Button onClick={() => setSelectedOutcomes({})}>Reset</Button>
+        <Button
+          onClick={() => {
+            setSelectedOutcomes({});
+            initialize();
+          }}
+        >
+          Reset
+        </Button>
       </div>
 
       <hr className="my-4 border-t border-gray-300" />
@@ -152,7 +198,7 @@ function App() {
         <div>
           <h2 className="mb-5 text-center text-xl tracking-tight">Match Outcomes</h2>
 
-          {matches.map((match, index) => (
+          {MATCHES.map((match, index) => (
             <Match
               key={index}
               index={index}
@@ -176,10 +222,12 @@ function App() {
               </TableHeader>
 
               <TableBody>
-                <TableRow>
-                  <TableCell className="text-center">Team A</TableCell>
-                  <TableCell className="text-center">100%</TableCell>
-                </TableRow>
+                {Object.entries(qualificationChances).map(([team, chance]) => (
+                  <TableRow key={team}>
+                    <TableCell className="text-center">{team}</TableCell>
+                    <TableCell className="text-center">{(chance * 100).toFixed(2)}%</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>
@@ -197,10 +245,12 @@ function App() {
               </TableHeader>
 
               <TableBody>
-                <TableRow>
-                  <TableCell className="text-center">Team A</TableCell>
-                  <TableCell className="text-center">10</TableCell>
-                </TableRow>
+                {Object.entries(effectivePoints).map(([team, points]) => (
+                  <TableRow key={team}>
+                    <TableCell className="text-center">{team}</TableCell>
+                    <TableCell className="text-center">{points}</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>

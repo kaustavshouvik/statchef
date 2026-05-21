@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 const matches = [
   {
@@ -129,8 +130,13 @@ function App() {
 
   return (
     <div className="m-4">
-      <h2 className="text-3xl">Qualification Predictions</h2>
-      <h4>Pick an outcome for each match.</h4>
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl">Qualification Predictions</h2>
+          <h4>Pick an outcome for each match.</h4>
+        </div>
+        <Button onClick={() => setSelectedOutcomes({})}>Reset</Button>
+      </div>
 
       <hr className="my-4 border-t border-gray-300" />
 

@@ -138,7 +138,15 @@ function App() {
       }
     }
 
-    const res = dfs(Math.max(...Object.keys(newOutcomes).map(Number)) + 1, newPoints);
+    let matchStartPosition = 0;
+    for (const position of Object.keys(newOutcomes)) {
+      const positionNum = Number(position);
+      if (positionNum > matchStartPosition && newOutcomes[position]) {
+        matchStartPosition = positionNum;
+      }
+    }
+
+    const res = dfs(matchStartPosition + 1, newPoints);
 
     const chances = {};
     for (const team of Object.values(TEAMS)) {

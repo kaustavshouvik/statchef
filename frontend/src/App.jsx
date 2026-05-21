@@ -115,6 +115,24 @@ function App() {
   const [qualificationChances, setQualificationChances] = useState({});
   const [effectivePoints, setEffectivePoints] = useState({});
 
+  const onQualificationChancesChange = (newQualificationChances, teamsOrder) => {
+    const orderedQualificationChances = {};
+    for (const team of teamsOrder) {
+      orderedQualificationChances[team] = newQualificationChances[team];
+    }
+
+    setQualificationChances(orderedQualificationChances);
+  };
+
+  const onEffectivePointsChange = (newEffectivePoints, teamsOrder) => {
+    const orderedEffectivePoints = {};
+    for (const team of teamsOrder) {
+      orderedEffectivePoints[team] = newEffectivePoints[team];
+    }
+
+    setEffectivePoints(orderedEffectivePoints);
+  };
+
   const onOutcomeChange = (matchIndex, outcome) => {
     const newOutcomes = {
       ...selectedOutcomes,
@@ -154,11 +172,13 @@ function App() {
       chances[team] = chance;
     }
 
+    const teamsOrder = Object.entries(newPoints)
+      .sort((a, b) => b[1] - a[1])
+      .map(([team]) => team);
+
     setSelectedOutcomes(newOutcomes);
-    setQualificationChances(
-      Object.fromEntries(Object.entries(chances).sort((a, b) => b[1] - a[1])),
-    );
-    setEffectivePoints(Object.fromEntries(Object.entries(newPoints).sort((a, b) => b[1] - a[1])));
+    onQualificationChancesChange(chances, teamsOrder);
+    onEffectivePointsChange(newPoints, teamsOrder);
   };
 
   const initialize = () => {
@@ -170,12 +190,12 @@ function App() {
       chances[team] = chance;
     }
 
-    setQualificationChances(
-      Object.fromEntries(Object.entries(chances).sort((a, b) => b[1] - a[1])),
-    );
-    setEffectivePoints(
-      Object.fromEntries(Object.entries(INITIAL_POINTS).sort((a, b) => b[1] - a[1])),
-    );
+    const teamsOrder = Object.entries(INITIAL_POINTS)
+      .sort((a, b) => b[1] - a[1])
+      .map(([team]) => team);
+
+    onQualificationChancesChange(chances, teamsOrder);
+    onEffectivePointsChange(INITIAL_POINTS, teamsOrder);
   };
 
   useEffect(() => {

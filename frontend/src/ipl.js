@@ -14,7 +14,7 @@ const TEAMS = {
 const INITIAL_POINTS = {
   [TEAMS.CSK]: 12,
   [TEAMS.DC]: 12,
-  [TEAMS.GT]: 16,
+  [TEAMS.GT]: 18,
   [TEAMS.KKR]: 13,
   [TEAMS.LSG]: 8,
   [TEAMS.MI]: 8,
@@ -25,10 +25,6 @@ const INITIAL_POINTS = {
 };
 
 const MATCHES = [
-  {
-    team1: TEAMS.GT,
-    team2: TEAMS.CSK,
-  },
   {
     team1: TEAMS.SRH,
     team2: TEAMS.RCB,

@@ -8,13 +8,12 @@ const getProbability = (points, maxTeams) => {
   }
 
   let i = 0;
-  const maxPoint = teamPoints[0][1];
   const n = teamPoints.length;
-  while (i < n) {
+  while (i < n && i < maxTeams) {
     const currentPoint = teamPoints[i][1];
     let teams = [];
 
-    while (i < n && teamPoints[i][1] === currentPoint) {
+    while (i < n && i < maxTeams && teamPoints[i][1] === currentPoint) {
       teams.push(teamPoints[i][0]);
       i++;
     }
@@ -23,27 +22,25 @@ const getProbability = (points, maxTeams) => {
     for (const team of teams) {
       res[team] += teamProb;
     }
-
-    if (i > maxTeams) {
-      break;
-    }
   }
+
+  // console.log({ res });
 
   return res;
 };
 
 // getProbability(
 //   {
-//     RCB: 5,
-//     GT: 4,
-//     SRH: 4,
-//     RR: 3,
-//     PBKS: 3,
-//     CSK: 2,
-//     DC: 2,
-//     KKR: 2,
-//     MI: 2,
-//     LSG: 2,
+//     RCB: 18,
+//     GT: 18,
+//     SRH: 16,
+//     RR: 16,
+//     PBKS: 15,
+//     CSK: 14,
+//     DC: 13,
+//     KKR: 12,
+//     MI: 8,
+//     LSG: 8,
 //   },
 //   4,
 // );

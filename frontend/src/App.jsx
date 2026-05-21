@@ -1,5 +1,13 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const matches = [
   {
@@ -140,7 +148,7 @@ function App() {
 
       <hr className="my-4 border-t border-gray-300" />
 
-      <div className="grid grid-cols-[1.25fr_2fr_2fr] gap-4 divide-x">
+      <div className="grid grid-cols-[1.5fr_2fr_2fr] divide-x">
         <div>
           <h2 className="mb-5 text-center text-xl tracking-tight">Match Outcomes</h2>
 
@@ -158,10 +166,44 @@ function App() {
 
         <div>
           <h2 className="mb-5 text-center text-xl tracking-tight">Qualification Chances</h2>
+          <div className="flex justify-center">
+            <Table className="w-[500px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-center">Team</TableHead>
+                  <TableHead className="text-center">Chances</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                <TableRow>
+                  <TableCell className="text-center">Team A</TableCell>
+                  <TableCell className="text-center">100%</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         </div>
 
         <div>
           <h2 className="mb-5 text-center text-xl tracking-tight">Effective Points</h2>
+          <div className="flex justify-center">
+            <Table className="w-[500px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-center">Team</TableHead>
+                  <TableHead className="text-center">Points</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                <TableRow>
+                  <TableCell className="text-center">Team A</TableCell>
+                  <TableCell className="text-center">10</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
     </div>
